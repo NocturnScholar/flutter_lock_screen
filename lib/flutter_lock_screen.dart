@@ -2,6 +2,7 @@ library flutter_lock_screen;
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 typedef void DeleteCode();
@@ -12,6 +13,9 @@ class LockScreen extends StatefulWidget {
   final VoidCallback fingerFunction;
   final bool fingerVerify;
   final String title;
+  final Color titleIconColor;
+  final Color titleFontColor;
+  final String titleFontFamily;
   final int passLength;
   final bool showWrongPassDialog;
   final bool showFingerPass;
@@ -19,7 +23,10 @@ class LockScreen extends StatefulWidget {
   final String wrongPassContent;
   final String wrongPassCancelButtonText;
   final String bgImage;
+  final String numFontFamily;
   final Color numColor;
+  final Color numBackgroundColor;
+  final Color numBorderColor;
   final String fingerPrintImage;
   final Color borderColor;
   final Color foregroundColor;
@@ -28,6 +35,9 @@ class LockScreen extends StatefulWidget {
   LockScreen({
     this.onSuccess,
     this.title,
+    this.titleIconColor = Colors.white,
+    this.titleFontColor = Colors.white,
+    this.titleFontFamily = "Open Sans",
     this.borderColor,
     this.foregroundColor = Colors.transparent,
     this.passLength,
@@ -36,7 +46,10 @@ class LockScreen extends StatefulWidget {
     this.fingerVerify = false,
     this.showFingerPass = false,
     this.bgImage,
+    this.numFontFamily = "Open Sans",
     this.numColor = Colors.black,
+    this.numBackgroundColor = Colors.white,
+    this.numBorderColor = Colors.white,
     this.fingerPrintImage,
     this.showWrongPassDialog = false,
     this.wrongPassTitle,
@@ -73,7 +86,9 @@ class _LockScreenState extends State<LockScreen> {
             setState(() {
               _currentState = 1;
             });
-            widget.onSuccess();
+            new Timer(new Duration(milliseconds: 200), () {
+              widget.onSuccess();
+            });
           } else {
             _currentState = 2;
             new Timer(new Duration(milliseconds: 1000), () {
@@ -92,7 +107,8 @@ class _LockScreenState extends State<LockScreen> {
                       child: AlertDialog(
                         title: Text(
                           widget.wrongPassTitle,
-                          style: TextStyle(fontFamily: "Open Sans"),
+                          style: TextStyle(
+                              color: Colors.black, fontFamily: "Open Sans"),
                         ),
                         content: Text(
                           widget.wrongPassContent,
@@ -149,7 +165,7 @@ class _LockScreenState extends State<LockScreen> {
       _fingerPrint();
     });
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: widget.numBackgroundColor,
       body: Stack(
         children: <Widget>[
           Container(
@@ -161,7 +177,7 @@ class _LockScreenState extends State<LockScreen> {
                   flex: 3,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: widget.numBackgroundColor,
                     ),
                     child: Stack(
                       children: <Widget>[
@@ -180,44 +196,44 @@ class _LockScreenState extends State<LockScreen> {
                                 ),
                               ),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                SizedBox(
-                                  height: Platform.isIOS ? 60 : 40,
-                                ),
-                                Text(
-                                  widget.title,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: "Open Sans"),
-                                ),
-                                SizedBox(
-                                  height: Platform.isIOS ? 50 : 30,
-                                ),
-                                CodePanel(
-                                  codeLength: widget.passLength,
-                                  currentLength: _currentCodeLength,
-                                  borderColor: widget.borderColor,
-                                  foregroundColor: widget.foregroundColor,
-                                  deleteCode: _deleteCode,
-                                  fingerVerify: widget.fingerVerify,
-                                  status: _currentState,
-                                ),
-                                SizedBox(
-                                  height: Platform.isIOS ? 30 : 15,
-                                ),
-                                Text(
-                                  "TYPE PASSCODE",
-                                  style: TextStyle(
-                                      color: Colors.white70.withOpacity(0.3),
-                                      fontSize: 18,
-                                      fontFamily: "Open Sans"),
-                                ),
-                              ],
+                            child: SafeArea(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Icon(
+                                      _currentState != 1
+                                          ? Icons.lock
+                                          : Icons.lock_open,
+                                      size: 36,
+                                      color: widget.titleIconColor),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  CodePanel(
+                                    codeLength: widget.passLength,
+                                    currentLength: _currentCodeLength,
+                                    borderColor: widget.borderColor,
+                                    foregroundColor: widget.foregroundColor,
+                                    deleteCode: _deleteCode,
+                                    fingerVerify: widget.fingerVerify,
+                                    status: _currentState,
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Text(
+                                    "TYPE PASSCODE",
+                                    style: TextStyle(
+                                        color: Colors.white70.withOpacity(0.3),
+                                        fontSize: 18,
+                                        fontFamily: "Open Sans"),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -255,9 +271,9 @@ class _LockScreenState extends State<LockScreen> {
                       },
                       child: GridView.count(
                         crossAxisCount: 3,
-                        childAspectRatio: 1.6,
-                        mainAxisSpacing: 35,
-                        padding: EdgeInsets.all(8),
+                        childAspectRatio: 1.8,
+                        mainAxisSpacing: 30,
+                        padding: EdgeInsets.all(5),
                         children: <Widget>[
                           buildContainerCircle(1),
                           buildContainerCircle(2),
@@ -294,8 +310,9 @@ class _LockScreenState extends State<LockScreen> {
         height: 50,
         width: 50,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.transparent,
             shape: BoxShape.circle,
+            border: new Border.all(color: widget.numBorderColor, width: 2.0),
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
@@ -308,6 +325,7 @@ class _LockScreenState extends State<LockScreen> {
             number.toString(),
             style: TextStyle(
                 fontSize: 28,
+                fontFamily: widget.numFontFamily,
                 fontWeight: FontWeight.normal,
                 color: widget.numColor),
           ),
@@ -327,8 +345,9 @@ class _LockScreenState extends State<LockScreen> {
         height: 50,
         width: 50,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.transparent,
             shape: BoxShape.circle,
+            border: new Border.all(color: widget.numBorderColor, width: 2.0),
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
@@ -366,8 +385,9 @@ class _LockScreenState extends State<LockScreen> {
         height: 50,
         width: 50,
         decoration: BoxDecoration(
-            color: circleColor,
+            color: Colors.transparent,
             shape: BoxShape.circle,
+            border: new Border.all(color: widget.numBorderColor, width: 2.0),
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
