@@ -16,6 +16,7 @@ class LockScreen extends StatefulWidget {
   final Color titleIconColor;
   final Color titleFontColor;
   final String titleFontFamily;
+  final String subtitleFontFamily;
   final int passLength;
   final bool showWrongPassDialog;
   final bool showFingerPass;
@@ -38,6 +39,7 @@ class LockScreen extends StatefulWidget {
     this.titleIconColor = Colors.white,
     this.titleFontColor = Colors.white,
     this.titleFontFamily = "Open Sans",
+    this.subtitleFontFamily = "Open Sans",
     this.borderColor,
     this.foregroundColor = Colors.transparent,
     this.passLength,
@@ -180,30 +182,14 @@ class _LockScreenState extends State<LockScreen> {
                       color: widget.numBackgroundColor,
                     ),
                     child: Stack(
-                      children: <Widget>[
-                        ClipPath(
-                          clipper: BgClipper(),
-                          child: Container(
+                      children: <Widget>[Container(
                             height: MediaQuery.of(context).size.height,
                             width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(widget.bgImage),
-                                fit: BoxFit.cover,
-                                colorFilter: ColorFilter.mode(
-                                  Colors.grey.shade800,
-                                  BlendMode.hardLight,
-                                ),
-                              ),
-                            ),
                             child: SafeArea(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  SizedBox(
-                                    height: 10,
-                                  ),
                                   Icon(
                                       _currentState != 1
                                           ? Icons.lock
@@ -228,15 +214,15 @@ class _LockScreenState extends State<LockScreen> {
                                   Text(
                                     "TYPE PASSCODE",
                                     style: TextStyle(
-                                        color: Colors.white70.withOpacity(0.3),
+                                        color: Colors.white,
                                         fontSize: 18,
-                                        fontFamily: "Open Sans"),
+                                        fontFamily: widget.subtitleFontFamily),
                                   ),
                                 ],
                               ),
                             ),
                           ),
-                        ),
+                        
                         widget.showFingerPass
                             ? Positioned(
                                 top: MediaQuery.of(context).size.height /
@@ -263,17 +249,19 @@ class _LockScreenState extends State<LockScreen> {
                 Expanded(
                   flex: Platform.isIOS ? 5 : 6,
                   child: Container(
-                    padding: EdgeInsets.only(left: 0, top: 0),
+                    padding: EdgeInsets.only(left: 20, top: 0, right: 20),
                     child:
                         NotificationListener<OverscrollIndicatorNotification>(
                       onNotification: (overscroll) {
                         overscroll.disallowGlow();
                       },
                       child: GridView.count(
+                        shrinkWrap: true,
                         crossAxisCount: 3,
-                        childAspectRatio: 1.8,
-                        mainAxisSpacing: 30,
-                        padding: EdgeInsets.all(5),
+                        childAspectRatio: 1.4,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 10,
+                        // padding: EdgeInsets.all(5),
                         children: <Widget>[
                           buildContainerCircle(1),
                           buildContainerCircle(2),
@@ -312,7 +300,7 @@ class _LockScreenState extends State<LockScreen> {
         decoration: BoxDecoration(
             color: Colors.transparent,
             shape: BoxShape.circle,
-            border: new Border.all(color: widget.numBorderColor, width: 2.0),
+            border: new Border.all(color: widget.numBorderColor, width: .8),
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
@@ -347,7 +335,7 @@ class _LockScreenState extends State<LockScreen> {
         decoration: BoxDecoration(
             color: Colors.transparent,
             shape: BoxShape.circle,
-            border: new Border.all(color: widget.numBorderColor, width: 2.0),
+            border: new Border.all(color: widget.numBorderColor, width: .8),
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
@@ -387,7 +375,7 @@ class _LockScreenState extends State<LockScreen> {
         decoration: BoxDecoration(
             color: Colors.transparent,
             shape: BoxShape.circle,
-            border: new Border.all(color: widget.numBorderColor, width: 2.0),
+            border: new Border.all(color: widget.numBorderColor, width: .8),
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
@@ -413,7 +401,7 @@ class CodePanel extends StatelessWidget {
   final borderColor;
   final bool fingerVerify;
   final foregroundColor;
-  final H = 30.0;
+  final H = 60.0;
   final W = 30.0;
   final DeleteCode deleteCode;
   final int status;
@@ -444,8 +432,9 @@ class CodePanel extends StatelessWidget {
             width: W,
             height: H,
             child: new Container(
+              height: H,
               decoration: new BoxDecoration(
-                shape: BoxShape.circle,
+                shape: BoxShape.rectangle,
                 border: new Border.all(color: color, width: 1.0),
                 color: Colors.green.shade500,
               ),
@@ -467,8 +456,9 @@ class CodePanel extends StatelessWidget {
               width: W,
               height: H,
               child: Container(
+                height: H,
                 decoration: new BoxDecoration(
-                    shape: BoxShape.circle,
+                    shape: BoxShape.rectangle,
                     border: new Border.all(color: color, width: 2.0),
                     color: foregroundColor),
               )));
@@ -477,8 +467,9 @@ class CodePanel extends StatelessWidget {
               width: W,
               height: H,
               child: new Container(
+                height: H,
                 decoration: new BoxDecoration(
-                  shape: BoxShape.circle,
+                  shape: BoxShape.rectangle,
                   border: new Border.all(color: color, width: 1.0),
                   color: color,
                 ),
@@ -488,7 +479,7 @@ class CodePanel extends StatelessWidget {
     }
 
     return new SizedBox.fromSize(
-      size: new Size(MediaQuery.of(context).size.width, 30.0),
+      size: new Size(MediaQuery.of(context).size.width, H),
       child: new Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
