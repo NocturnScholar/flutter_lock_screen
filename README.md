@@ -9,8 +9,7 @@ This package gives you beautiful pass code page for using both android and ios.
 
 ## Demo
 
-<img src="http://www.yasinilhan.com/passcode/howtouse.gif" width="320" height="600" title="Screen Shoot">
-<img src="http://www.yasinilhan.com/passcode/1.png" width="300" height="600" title="Screen Shoot">
+<img src="images/demo.png" width="300" height="600" title="Screen Shoot">
 
 ## Finger Print Usage
 First, be sure you should ensure that you add the `local_auth` package as a dependency.
