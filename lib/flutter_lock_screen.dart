@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 typedef void DeleteCode();
 typedef Future<bool> PassCodeVerify(List<int> passcode);
@@ -74,6 +75,21 @@ class _LockScreenState extends State<LockScreen> {
   var _inputCodes = <int>[];
   var _currentState = 0;
   Color circleColor = Colors.white;
+
+  void _lockPortraitMode() async {
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  }
+
+  @override
+  void initState() {
+    _lockPortraitMode();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   _onCodeClick(int code) {
     if (_currentCodeLength < widget.passLength) {
