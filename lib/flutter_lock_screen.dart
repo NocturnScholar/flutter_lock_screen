@@ -248,20 +248,26 @@ class _LockScreenState extends State<LockScreen> {
                 ),
                 Expanded(
                   flex: Platform.isIOS ? 5 : 6,
-                  child: Container(
-                    padding: EdgeInsets.only(left: 20, top: 0, right: 20),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: 1200,
+                      maxWidth: 600
+                    ),
+                    child: Container(
+                    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * .1, top: 0, right: MediaQuery.of(context).size.width * .1),
                     child:
                         NotificationListener<OverscrollIndicatorNotification>(
                       onNotification: (overscroll) {
                         overscroll.disallowGlow();
                       },
                       child: GridView.count(
+                        physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         crossAxisCount: 3,
-                        childAspectRatio: 1.4,
-                        crossAxisSpacing: 5,
-                        mainAxisSpacing: 10,
-                        // padding: EdgeInsets.all(5),
+                        childAspectRatio: 1.1,
+                        crossAxisSpacing: 15,
+                        mainAxisSpacing: 15,
+                        padding: EdgeInsets.only(bottom: 50),
                         children: <Widget>[
                           buildContainerCircle(1),
                           buildContainerCircle(2),
@@ -278,6 +284,7 @@ class _LockScreenState extends State<LockScreen> {
                         ],
                       ),
                     ),
+                  ),
                   ),
                 )
               ],
