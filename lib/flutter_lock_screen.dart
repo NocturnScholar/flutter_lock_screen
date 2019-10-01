@@ -48,7 +48,7 @@ class LockScreen extends StatefulWidget {
     this.fingerFunction,
     this.fingerVerify = false,
     this.showFingerPass = false,
-    this.bgImage,
+    // this.bgImage,
     this.numFontFamily = "Open Sans",
     this.numColor = Colors.black,
     this.numBackgroundColor = Colors.white,
@@ -59,8 +59,8 @@ class LockScreen extends StatefulWidget {
     this.wrongPassContent,
     this.wrongPassCancelButtonText,
   })  : assert(title != null),
-        assert(passLength <= 8),
-        assert(bgImage != null),
+        assert(passLength <= 8 && passLength > 5),
+        // assert(bgImage != null),
         assert(borderColor != null),
         assert(foregroundColor != null),
         assert(passCodeVerify != null),
@@ -76,6 +76,8 @@ class _LockScreenState extends State<LockScreen> {
   var _currentState = 0;
   Color circleColor = Colors.white;
 
+  var numBtns;
+
   void _lockPortraitMode() async {
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
@@ -84,6 +86,19 @@ class _LockScreenState extends State<LockScreen> {
   void initState() {
     _lockPortraitMode();
     super.initState();
+    numBtns = <Widget>[
+      buildContainerCircle(1),
+      buildContainerCircle(2),
+      buildContainerCircle(3),
+      buildContainerCircle(4),
+      buildContainerCircle(5),
+      buildContainerCircle(6),
+      buildContainerCircle(7),
+      buildContainerCircle(8),
+      buildContainerCircle(9),
+      buildContainerCircle(0),
+    ];
+    numBtns.shuffle();
   }
 
   @override
@@ -126,7 +141,7 @@ class _LockScreenState extends State<LockScreen> {
                         title: Text(
                           widget.wrongPassTitle,
                           style: TextStyle(
-                              color: Colors.black, fontFamily: "Open Sans"),
+                              color: Colors.white, fontFamily: "Open Sans"),
                         ),
                         content: Text(
                           widget.wrongPassContent,
@@ -152,6 +167,7 @@ class _LockScreenState extends State<LockScreen> {
   }
 
   _fingerPrint() {
+    _deleteAllCode();
     if (widget.fingerVerify) {
       widget.onSuccess();
     }
@@ -179,134 +195,167 @@ class _LockScreenState extends State<LockScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(milliseconds: 200), () {
-      _fingerPrint();
-    });
+    // Future.delayed(Duration(milliseconds: 200), () {
+    //   _fingerPrint();
+    // });
     return Scaffold(
-      backgroundColor: widget.numBackgroundColor,
-      body: Stack(
+      // backgroundColor: widget.numBackgroundColor,
+      appBar: AppBar(
+        title: Center(
+            child: Text(
+          widget.title,
+          textAlign: TextAlign.center,
+        )),
+      ),
+      body: Container(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  flex: 3,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: widget.numBackgroundColor,
-                    ),
-                    child: Stack(
-                      children: <Widget>[Container(
-                            height: MediaQuery.of(context).size.height,
-                            width: MediaQuery.of(context).size.width,
-                            child: SafeArea(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(
-                                      _currentState != 1
-                                          ? Icons.lock
-                                          : Icons.lock_open,
-                                      size: 36,
-                                      color: widget.titleIconColor),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  CodePanel(
-                                    codeLength: widget.passLength,
-                                    currentLength: _currentCodeLength,
-                                    borderColor: widget.borderColor,
-                                    foregroundColor: widget.foregroundColor,
-                                    deleteCode: _deleteCode,
-                                    fingerVerify: widget.fingerVerify,
-                                    status: _currentState,
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    "TYPE PASSCODE",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontFamily: widget.subtitleFontFamily),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        
-                        widget.showFingerPass
-                            ? Positioned(
-                                top: MediaQuery.of(context).size.height /
-                                    (Platform.isIOS ? 4 : 5),
-                                left: 20,
-                                bottom: 10,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    widget.fingerFunction();
-                                  },
-                                  child: Image.asset(
-                                    widget.fingerPrintImage,
-                                    height: 40,
-                                    width: 40,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              )
-                            : Container(),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: Platform.isIOS ? 5 : 6,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: 1200,
-                      maxWidth: 600
-                    ),
-                    child: Container(
-                    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * .1, top: 0, right: MediaQuery.of(context).size.width * .1),
-                    child:
-                        NotificationListener<OverscrollIndicatorNotification>(
-                      onNotification: (overscroll) {
-                        overscroll.disallowGlow();
-                      },
-                      child: GridView.count(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        crossAxisCount: 3,
-                        childAspectRatio: 1.1,
-                        crossAxisSpacing: 15,
-                        mainAxisSpacing: 15,
-                        padding: EdgeInsets.only(bottom: 50),
+          Expanded(
+            flex: 3,
+            child: Container(
+              decoration: BoxDecoration(
+                color: widget.numBackgroundColor,
+                // image: DecorationImage(
+                //   image: AssetImage(widget.bgImage),
+                //   fit: BoxFit.fitWidth,
+                // ),
+              ),
+              child: Stack(
+                children: <Widget>[
+                  // Align(
+                  //     alignment: Alignment.topLeft,
+                  //     child: Container(
+                  //       margin: EdgeInsets.all(4),
+                  //       // alignment: Alignment.center,
+                  //       child: Icon(
+                  //           _currentState != 1 ? Icons.lock : Icons.lock_open,
+                  //           size: 40,
+                  //           color: widget.titleIconColor),
+                  //     )),
+                  Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    child: SafeArea(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
-                          buildContainerCircle(1),
-                          buildContainerCircle(2),
-                          buildContainerCircle(3),
-                          buildContainerCircle(4),
-                          buildContainerCircle(5),
-                          buildContainerCircle(6),
-                          buildContainerCircle(7),
-                          buildContainerCircle(8),
-                          buildContainerCircle(9),
-                          buildRemoveIcon(Icons.close),
-                          buildContainerCircle(0),
-                          buildContainerIcon(Icons.arrow_back),
+                          // SizedBox(
+                          //   height: 50,
+                          // ),
+                          Container(
+                            margin: EdgeInsets.all(4),
+                            alignment: Alignment.center,
+                            child: Icon(
+                                _currentState != 1
+                                    ? Icons.lock
+                                    : Icons.lock_open,
+                                size: 50,
+                                color: widget.borderColor),
+                          ),
+                          CodePanel(
+                            codeLength: widget.passLength,
+                            currentLength: _currentCodeLength,
+                            borderColor: widget.borderColor,
+                            foregroundColor: widget.foregroundColor,
+                            deleteCode: _deleteCode,
+                            fingerVerify: widget.fingerVerify,
+                            status: _currentState,
+                          ),
+                          // Text(
+                          //   "TYPE PASSCODE",
+                          //   style: TextStyle(
+                          //       color: Colors.white,
+                          //       fontSize: 18,
+                          //       fontFamily: widget.subtitleFontFamily),
+                          // ),
                         ],
                       ),
                     ),
                   ),
-                  ),
-                )
-              ],
+                ],
+              ),
             ),
           ),
+          Expanded(
+            flex: Platform.isIOS ? 5 : 6,
+            child: Center(
+                child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 1200, maxWidth: 600),
+              child: Container(
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).size.width * .1,
+                    top: 0,
+                    right: MediaQuery.of(context).size.width * .1),
+                child: NotificationListener<OverscrollIndicatorNotification>(
+                  onNotification: (overscroll) {
+                    overscroll.disallowGlow();
+                  },
+                  child: GridView.count(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    crossAxisCount: 3,
+                    childAspectRatio: 1.5,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                    padding: EdgeInsets.only(bottom: 50),
+                    children: <Widget>[
+                      numBtns[0],
+                      numBtns[1],
+                      numBtns[2],
+                      numBtns[3],
+                      numBtns[4],
+                      numBtns[5],
+                      numBtns[6],
+                      numBtns[7],
+                      numBtns[8],
+                      _buildContainerFingerScan(),
+                      numBtns[9],
+                      buildContainerIcon(Icons.arrow_back)
+                    ],
+                  ),
+                ),
+              ),
+            )),
+          )
         ],
+      )),
+    );
+  }
+
+  Widget _buildContainerFingerScan() {
+    return InkResponse(
+      highlightColor: Colors.red,
+      focusColor: Colors.red,
+      hoverColor: Colors.red,
+      splashColor: Colors.red,
+      onTap: () {
+        widget.fingerFunction();
+      },
+      child: Container(
+        height: 40,
+        width: 40,
+        decoration: BoxDecoration(
+            color: Colors.transparent,
+            shape: BoxShape.circle,
+            border: new Border.all(color: widget.numBorderColor, width: .8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                spreadRadius: 0,
+              )
+            ]),
+        child: Center(
+          child: Image.asset(
+            widget.fingerPrintImage,
+            height: 40,
+            width: 40,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
@@ -318,8 +367,8 @@ class _LockScreenState extends State<LockScreen> {
         _onCodeClick(number);
       },
       child: Container(
-        height: 50,
-        width: 50,
+        height: 40,
+        width: 40,
         decoration: BoxDecoration(
             color: Colors.transparent,
             shape: BoxShape.circle,
@@ -353,8 +402,8 @@ class _LockScreenState extends State<LockScreen> {
         }
       },
       child: Container(
-        height: 50,
-        width: 50,
+        height: 40,
+        width: 40,
         decoration: BoxDecoration(
             color: Colors.transparent,
             shape: BoxShape.circle,
@@ -393,8 +442,8 @@ class _LockScreenState extends State<LockScreen> {
         _deleteCode();
       },
       child: Container(
-        height: 50,
-        width: 50,
+        height: 40,
+        width: 40,
         decoration: BoxDecoration(
             color: Colors.transparent,
             shape: BoxShape.circle,
@@ -425,7 +474,7 @@ class CodePanel extends StatelessWidget {
   final bool fingerVerify;
   final foregroundColor;
   final H = 60.0;
-  final W = 30.0;
+  final W = 35.0;
   final DeleteCode deleteCode;
   final int status;
   CodePanel(
@@ -457,7 +506,7 @@ class CodePanel extends StatelessWidget {
             child: new Container(
               height: H,
               decoration: new BoxDecoration(
-                shape: BoxShape.rectangle,
+                shape: BoxShape.circle,
                 border: new Border.all(color: color, width: 1.0),
                 color: Colors.green.shade500,
               ),
@@ -481,7 +530,7 @@ class CodePanel extends StatelessWidget {
               child: Container(
                 height: H,
                 decoration: new BoxDecoration(
-                    shape: BoxShape.rectangle,
+                    shape: BoxShape.circle,
                     border: new Border.all(color: color, width: 2.0),
                     color: foregroundColor),
               )));
@@ -492,7 +541,7 @@ class CodePanel extends StatelessWidget {
               child: new Container(
                 height: H,
                 decoration: new BoxDecoration(
-                  shape: BoxShape.rectangle,
+                  shape: BoxShape.circle,
                   border: new Border.all(color: color, width: 1.0),
                   color: color,
                 ),
