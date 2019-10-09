@@ -24,7 +24,7 @@ class LockScreen extends StatefulWidget {
   final String wrongPassTitle;
   final String wrongPassContent;
   final String wrongPassCancelButtonText;
-  final String bgImage;
+  // final String bgImage;
   final String numFontFamily;
   final Color numColor;
   final Color numBackgroundColor;
